@@ -14,8 +14,8 @@ from spotipy.oauth2 import SpotifyOAuth
 from track import Album, Track
 
 SECRETS_FILE = "secrets.yaml"  # pragma: allowlist secret
+CONFIG_FILE = "config.yaml"
 ALBUM_INFO_FILE = "album_info.json"
-FORCE_RELOAD = True
 HEIGHT_PX = 448
 WIDTH_PX = 600
 
@@ -68,6 +68,9 @@ def resize_img(im: Image, height_px: int, width_px: int) -> Image:
 
 
 if __name__ == "__main__":
+    with open(CONFIG_FILE) as f:
+        config = yaml.safe_load(f)
+
     try:
         with open(ALBUM_INFO_FILE, "r") as f:
             info = json.loads(f.read())
@@ -80,7 +83,7 @@ if __name__ == "__main__":
         print("don't do it!")
         need_update = False
 
-    if need_update or FORCE_RELOAD:
+    if need_update or config["force_reload"]:
         img = get_image_from_album(album)
         img = resize_img(img, HEIGHT_PX, WIDTH_PX)
         img.save("img.png")
