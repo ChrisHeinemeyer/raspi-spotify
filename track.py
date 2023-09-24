@@ -26,6 +26,7 @@ class Album:
     images: List[Image]
     name: str
     uri: str
+    artists: List[Artist]
 
 
 @dataclass
