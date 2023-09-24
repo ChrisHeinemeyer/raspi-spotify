@@ -1,3 +1,6 @@
+import json
+import platform
+from dataclasses import asdict
 from io import BytesIO
 from typing import Dict, List, Tuple
 
@@ -11,6 +14,8 @@ from spotipy.oauth2 import SpotifyOAuth
 from track import Album, Track
 
 SECRETS_FILE = "secrets.yaml"  # pragma: allowlist secret
+ALBUM_INFO_FILE = "album_info.json"
+FORCE_RELOAD = True
 HEIGHT_PX = 448
 WIDTH_PX = 600
 
@@ -63,6 +68,27 @@ def resize_img(im: Image, height_px: int, width_px: int) -> Image:
 
 
 if __name__ == "__main__":
+    try:
+        with open(ALBUM_INFO_FILE, "r") as f:
+            info = json.loads(f.read())
+    except FileNotFoundError:
+        info = None
+
     album = get_most_played_album()
-    img = get_image_from_album(album)
-    img = resize_img(img, HEIGHT_PX, WIDTH_PX)
+    need_update = True
+    if info and info["uri"] == album.uri:
+        print("don't do it!")
+        need_update = False
+
+    if need_update or FORCE_RELOAD:
+        img = get_image_from_album(album)
+        img = resize_img(img, HEIGHT_PX, WIDTH_PX)
+        with open(ALBUM_INFO_FILE, "w") as f:
+            f.write(json.dumps(asdict(album)))
+
+        if platform.system() == "Linux":
+            print("setting display")
+            from inky.auto import auto
+
+            display = auto()
+            display.set_img(img)
