@@ -91,4 +91,4 @@ if __name__ == "__main__":
             from inky.auto import auto
 
             display = auto()
-            display.set_img(img)
+            display.set_image(img)
