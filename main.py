@@ -93,3 +93,4 @@ if __name__ == "__main__":
 
             display = auto()
             display.set_image(img)
+            display.show()
