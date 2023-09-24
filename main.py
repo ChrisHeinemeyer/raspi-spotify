@@ -114,7 +114,7 @@ def main(config):
             display.set_image(img, saturation=config["saturation"])
             print(display.buf)
             buf = display.buf.copy()
-            np.save(buf, "buf")
+            np.save("buf", buf)
             display.show()
             logger.debug("Done setting display")
         else:
