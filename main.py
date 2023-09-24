@@ -83,6 +83,7 @@ if __name__ == "__main__":
     if need_update or FORCE_RELOAD:
         img = get_image_from_album(album)
         img = resize_img(img, HEIGHT_PX, WIDTH_PX)
+        img.save("img.png")
         with open(ALBUM_INFO_FILE, "w") as f:
             f.write(json.dumps(asdict(album)))
 
