@@ -110,7 +110,7 @@ def main(config):
             from inky.auto import auto
 
             display = auto()
-            display.set_image(img)
+            display.set_image(img, saturation=config["saturation"])
             display.show()
             logger.debug("Done setting display")
         else:
