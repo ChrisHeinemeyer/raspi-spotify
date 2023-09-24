@@ -1,9 +1,12 @@
+from io import BytesIO
 from pprint import pprint
 from typing import Dict, List, Tuple
 
+import requests
 import spotipy
 import yaml
 from dacite import from_dict
+from PIL import Image
 from spotipy.oauth2 import SpotifyOAuth
 
 from track import Album, Track
@@ -42,5 +45,15 @@ def get_most_played_album() -> Album:
     return counts[0][0]
 
 
+def get_image_from_album(album: Album, px: int) -> Image:
+    #   TODO find best sized image
+    url = album.images[0].url
+    raw_img = requests.get(url)
+    img = Image.open(BytesIO(raw_img.content))
+    return img.resize((px, px))
+
+
 if __name__ == "__main__":
-    print(get_most_played_album())
+    album = get_most_played_album()
+    img = get_image_from_album(album, 480)
+    print(img)
