@@ -66,10 +66,12 @@ def get_image_from_album(album: Album) -> Image:
 
 def resize_img(im: Image, height_px: int, width_px: int) -> Image:
     #  TODO remove assumption height is smaller than width
+    logger = logging.getLogger(__name__)
     im = im.resize((height_px, height_px))
     bar_width_px = (width_px - height_px) // 2
     base_img = Image.new("RGB", (width_px, height_px), (0, 0, 0))
     base_img.paste(im, (bar_width_px, 0))
+    logger.debug(f"Resized image to size {base_img.size}")
     return base_img
 
 
