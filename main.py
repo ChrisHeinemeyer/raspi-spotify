@@ -111,6 +111,8 @@ def main(config):
 
             display = auto()
             display.set_image(img, saturation=config["saturation"])
+            out_img = Image.fromarray(display.buf)
+            out_img.save("img_displayed.png")
             display.show()
             logger.debug("Done setting display")
         else:
