@@ -5,6 +5,7 @@ from dataclasses import asdict
 from io import BytesIO
 from typing import Dict, List, Tuple
 
+import numpy as np
 import requests
 import spotipy
 import yaml
@@ -111,8 +112,9 @@ def main(config):
 
             display = auto()
             display.set_image(img, saturation=config["saturation"])
-            out_img = Image.fromarray(display.buf)
-            out_img.save("img_displayed.png")
+            print(display.buf)
+            buf = display.buf.copy()
+            np.save(buf, "buf")
             display.show()
             logger.debug("Done setting display")
         else:
