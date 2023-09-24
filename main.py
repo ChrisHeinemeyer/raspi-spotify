@@ -106,7 +106,7 @@ def main(config):
             f.write(json.dumps(asdict(album)))
 
         if platform.system() == "Linux":
-            logger.debug("Setting display")
+            logger.debug(f"Setting display with saturation {config['saturation']}")
             from inky.auto import auto
 
             display = auto()
