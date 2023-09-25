@@ -1,0 +1,10 @@
+[Unit]
+Description=Service to update the color e-ink display
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+Environment="WD=/home/cheineme/raspi-spotify"
+WorkingDirectory=${WD}
+ExecStart=/bin/bash ${WD}/run.sh

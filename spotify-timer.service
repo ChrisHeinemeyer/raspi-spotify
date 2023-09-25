@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer for spotify service
+
+[Timer]
+OnBootSec=0min
+OnUnitActiveSec=6h
+Unit=spotify.service
+
+[Install]
+WantedBy=timers.target
