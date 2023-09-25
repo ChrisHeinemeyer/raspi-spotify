@@ -12,7 +12,7 @@ repos:
     rev: 5.12.0
     hooks:
       - id: isort
-        language_version: python3.10
+        language_version: python3.9
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
     hooks:
@@ -22,4 +22,4 @@ repos:
     rev: stable
     hooks:
       - id: black
-        language_version: python3.10
+        language_version: python3.9
