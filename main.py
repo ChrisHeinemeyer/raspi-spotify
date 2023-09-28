@@ -1,6 +1,7 @@
 import json
 import logging
 import platform
+import subprocess
 import time
 from dataclasses import asdict
 from io import BytesIO
@@ -133,12 +134,22 @@ def main(config):
             display.set_image(img, saturation=config["saturation"])
             display.show()
             logger.debug("Done setting display")
+            logger.debug("Shutting down")
+            subprocess.run(
+                ["pisugar-poweroff", "--model", "PiSugar3", "--countdown", "3"]
+            )
+
         else:
             logger.debug(f"Can't set display on platform {platform.system()}")
     else:
         logger.debug("Not going to get or set image")
 
     logger.debug("Finished")
+
+
+def log_subprocess_output(pipe):
+    for line in iter(pipe.readline, b""):  # b'\n'-separated lines
+        logging.info("got line from subprocess: %r", line)
 
 
 if __name__ == "__main__":
