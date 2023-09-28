@@ -6,7 +6,6 @@ from dataclasses import asdict
 from io import BytesIO
 from typing import Dict, List, Tuple
 
-import numpy as np
 import requests
 import spotipy
 import yaml
@@ -45,7 +44,7 @@ def get_most_played_album() -> Album:
     while not data_received and time.time() - start_time < NETWORK_TIMEOUT_S:
         try:
             results = sp.current_user_recently_played()
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             logger.debug(f"Network connection failed at {time.time() - start_time} s")
             time.sleep(5)
         else:
