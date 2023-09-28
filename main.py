@@ -1,6 +1,7 @@
 import json
 import logging
 import platform
+import time
 from dataclasses import asdict
 from io import BytesIO
 from typing import Dict, List, Tuple
@@ -19,6 +20,7 @@ SECRETS_FILE = "secrets.yaml"  # pragma: allowlist secret
 CONFIG_FILE = "config.yaml"
 LOG_FILE = "log.log"
 ALBUM_INFO_FILE = "album_info.json"
+NETWORK_TIMEOUT_S = 180
 HEIGHT_PX = 448
 WIDTH_PX = 600
 
@@ -38,7 +40,25 @@ def get_most_played_album() -> Album:
         )
     )
     tracks = []
-    results = sp.current_user_recently_played()
+    data_received = False
+    start_time = time.time()
+    while not data_received and time.time() - start_time < NETWORK_TIMEOUT_S:
+        try:
+            results = sp.current_user_recently_played()
+        except ConnectionError:
+            logger.debug(f"Network connection failed at {time.time() - start_time} s")
+            time.sleep(5)
+        else:
+            data_received = True
+            logger.debug(
+                f"Network connection successful at {time.time() - start_time} s"
+            )
+
+    if not data_received:
+        raise ConnectionError(
+            f"Could not connect to network after {time.time() - start_time} s"
+        )
+
     for idx, item in enumerate(results["items"]):
         track = from_dict(Track, item["track"])
         tracks.append(track)
@@ -132,7 +152,6 @@ if __name__ == "__main__":
         format="%(asctime)s - %(levelname)s: %(message)s",
     )
     logging.getLogger().addHandler(logging.StreamHandler())
-
     logging.getLogger("spotipy").setLevel(logging.INFO)
     logging.getLogger("requests").setLevel(logging.INFO)
     logging.getLogger("urllib3").setLevel(logging.INFO)

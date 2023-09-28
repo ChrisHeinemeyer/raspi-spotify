@@ -1,5 +1,6 @@
 [Unit]
 Description=Timer for spotify service
+Wants=spotify.service
 
 [Timer]
 OnBootSec=0min
