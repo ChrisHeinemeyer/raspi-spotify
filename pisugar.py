@@ -1,5 +1,7 @@
+import logging
 import socket
 import subprocess
+import sys
 from enum import Enum
 
 HOST = "127.0.0.1"
@@ -13,7 +15,9 @@ class PisugarCommands(Enum):
 
 class Pisugar:
     def __init__(self, host: str = HOST, port: int = PORT):
+        self.logger = logging.getLogger(__file__)
         self.sock: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.logger.debug(f"Connecting to pisugar socket at {host}: {port})")
         self.sock.connect((host, port))
 
     def restart(countdown_s: int = 10, num_retries: int = 10):
@@ -31,15 +35,20 @@ class Pisugar:
 
     def get_command(self, cmd: PisugarCommands, *args):
         send_str = f"{cmd.value}"
-        print(f"sending {send_str.encode()}")
+        self.logger.debug(f"Sending {send_str.encode()}")
         self.sock.send(send_str.encode())
         res = self.sock.recv(1024)
+        self.logger.debug(f"Received {res}")
         return res.decode()
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s - %(levelname)s: %(message)s",
+    )
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
     ps = Pisugar()
     for command in PisugarCommands:
-        print(command)
         res = ps.get_command(command)
-        print(res)
