@@ -31,6 +31,7 @@ class Pisugar:
 
     def get_command(self, cmd: PisugarCommands, *args):
         send_str = f"{cmd.value}"
+        print(f"sending {send_str.encode()}")
         self.sock.send(send_str.encode())
         res = self.sock.recv(1024)
         return res.decode()
