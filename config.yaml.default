@@ -1,2 +1,5 @@
 force_reload: false
-saturation=0.5
+saturation: 0.5
+restart_pisugar: true
+pisugar_period: 5
+pisugar_period_units: m

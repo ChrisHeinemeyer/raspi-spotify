@@ -134,18 +134,19 @@ def main(config):
             display.set_image(img, saturation=config["saturation"])
             display.show()
             logger.debug("Done setting display")
-            logger.debug("Shutting down")
-            subprocess.run(
-                [
-                    "pisugar-poweroff",
-                    "--model",
-                    "PiSugar 3",
-                    "--countdown",
-                    "10",
-                    "--retries",
-                    "10",
-                ]
-            )
+            if config["restart_pisugar"]:
+                logger.debug("Shutting down")
+                subprocess.run(
+                    [
+                        "pisugar-poweroff",
+                        "--model",
+                        "PiSugar 3",
+                        "--countdown",
+                        "10",
+                        "--retries",
+                        "10",
+                    ]
+                )
 
         else:
             logger.debug(f"Can't set display on platform {platform.system()}")
