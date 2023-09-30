@@ -136,7 +136,15 @@ def main(config):
             logger.debug("Done setting display")
             logger.debug("Shutting down")
             subprocess.run(
-                ["pisugar-poweroff", "--model", "PiSugar 3", "--countdown", "3"]
+                [
+                    "pisugar-poweroff",
+                    "--model",
+                    "PiSugar 3",
+                    "--countdown",
+                    "10",
+                    "--retries",
+                    "10",
+                ]
             )
 
         else:

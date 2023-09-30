@@ -2,12 +2,15 @@
 Description=Service to update the color e-ink display
 Wants=network-online.target
 After=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=3
 
 [Service]
 Type=simple
 Environment="WD=/home/cheineme/raspi-spotify"
 WorkingDirectory=/home/cheineme/raspi-spotify
 ExecStart=/bin/bash /home/cheineme/raspi-spotify/run.sh
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
