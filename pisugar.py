@@ -62,6 +62,7 @@ if __name__ == "__main__":
     ps = Pisugar()
 
     ps.send_command(PisugarCommands.RTC_WEB)
-    ps.send_command(PisugarCommands.RTC_ALARM_SET, "2023-09-29T20:19:30.000-07:00", 127)
+    ps.send_command(PisugarCommands.RTC_ALARM_SET, "2023-09-29T20:20:30.000-07:00", 127)
     ps.send_command(PisugarCommands.GET_RTC_ALARM_TIME)
     ps.send_command(PisugarCommands.GET_RTC_ALARM_ENABLED)
+    ps.restart()
