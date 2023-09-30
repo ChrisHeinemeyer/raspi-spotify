@@ -7,6 +7,7 @@ PORT = 8423
 
 
 class PisugarCommands(Enum):
+    GET_BATTERY = "get battery"
     GET_RTC_TIME = "get rtc_time"
 
 
@@ -37,5 +38,7 @@ class Pisugar:
 
 if __name__ == "__main__":
     ps = Pisugar()
-    res = ps.get_command(PisugarCommands.GET_RTC_TIME)
-    print(res)
+    for command in PisugarCommands:
+        print(command)
+        res = ps.get_command(command)
+        print(res)
