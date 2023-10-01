@@ -81,7 +81,7 @@ class Pisugar:
         return res.decode()
 
     def parse_response(self, response: str):
-        return response[response.find(": ") :]
+        return response[response.find(":") + 1 :].strip()
 
     def set_alarm_time(self, alarm_time: datetime.datetime, days: Weekdays = ALL_DAYS):
         days = Weekdays.MONDAY | Weekdays.THURSDAY
