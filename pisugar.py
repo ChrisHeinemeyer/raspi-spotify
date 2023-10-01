@@ -1,8 +1,13 @@
+from __future__ import annotations
+
+import datetime
 import logging
 import socket
 import subprocess
 import sys
-from enum import Enum
+from enum import Enum, Flag, auto
+
+import pisugar
 
 HOST = "127.0.0.1"
 PORT = 8423
@@ -19,6 +24,30 @@ class PisugarCommands(Enum):
     RTC_ALARM_SET = "rtc_alarm_set"  # set rtc wakeup alarm
     GET_RTC_ALARM_TIME = "get rtc_alarm_time"
     GET_RTC_ALARM_ENABLED = "get rtc_alarm_enabled"
+
+
+class Weekdays(Flag):
+    SUNDAY = auto()
+    MONDAY = auto()
+    TUESDAY = auto()
+    WEDNESDAY = auto()
+    THURSDAY = auto()
+    FRIDAY = auto()
+    SATURDAY = auto()
+
+    def day_str(self):
+        return [d.name for d in Weekdays if d in self]
+
+
+WEEKENDS: Weekdays = Weekdays.SUNDAY | Weekdays.SATURDAY
+WEEKDAYS = (
+    Weekdays.MONDAY
+    | Weekdays.TUESDAY
+    | Weekdays.WEDNESDAY
+    | Weekdays.THURSDAY
+    | Weekdays.FRIDAY
+)
+ALL_DAYS = WEEKENDS | WEEKDAYS
 
 
 class Pisugar:
@@ -50,6 +79,21 @@ class Pisugar:
         res = self.sock.recv(1024)
         self.logger.debug(f"Received {res}")
         return res.decode()
+
+    def parse_response(self, response: str):
+        return response[response.find(": ") :]
+
+    def set_alarm_time(self, alarm_time: datetime.datetime, days: Weekdays = ALL_DAYS):
+        days = Weekdays.MONDAY | Weekdays.THURSDAY
+        self.logger.debug(
+            f"Setting alarm for {alarm_time.isoformat()} for days {days.day_str()}"
+        )
+        ps.send_command(
+            PisugarCommands.RTC_ALARM_SET, alarm_time.isoformat(), days.value
+        )
+
+    def set_alarm_time_from_now(self, **kwargs):
+        self.send_command(PisugarCommands.RTC_WEB)
 
 
 if __name__ == "__main__":
