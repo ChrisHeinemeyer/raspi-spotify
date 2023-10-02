@@ -94,7 +94,7 @@ class Pisugar:
             PisugarCommands.RTC_ALARM_SET, alarm_time.isoformat(), days.value
         )
 
-        received_time = ps.send_command(PisugarCommands.GET_RTC_ALARM_TIME)
+        received_time = self.send_command(PisugarCommands.GET_RTC_ALARM_TIME)
         self.logger.debug(f"Received alarm time {received_time}")
 
     def set_alarm_time_from_now(self, **kwargs):
