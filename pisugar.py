@@ -90,7 +90,7 @@ class Pisugar:
         self.logger.debug(
             f"Setting alarm for {alarm_time.isoformat()} for days {days.day_str()}"
         )
-        ps.send_command(
+        self.send_command(
             PisugarCommands.RTC_ALARM_SET, alarm_time.isoformat(), days.value
         )
 
