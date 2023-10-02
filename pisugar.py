@@ -7,6 +7,8 @@ import subprocess
 import sys
 from enum import Enum, Flag, auto
 
+from dateutil.parser import parser
+
 import pisugar
 
 HOST = "127.0.0.1"
@@ -84,7 +86,6 @@ class Pisugar:
         return response[response.find(":") + 1 :].strip()
 
     def set_alarm_time(self, alarm_time: datetime.datetime, days: Weekdays = ALL_DAYS):
-        days = Weekdays.MONDAY | Weekdays.THURSDAY
         self.logger.debug(
             f"Setting alarm for {alarm_time.isoformat()} for days {days.day_str()}"
         )
@@ -92,8 +93,18 @@ class Pisugar:
             PisugarCommands.RTC_ALARM_SET, alarm_time.isoformat(), days.value
         )
 
+        received_time = ps.send_command(PisugarCommands.GET_RTC_ALARM_TIME)
+        self.logger.debug(f"Received alarm time {received_time}")
+
     def set_alarm_time_from_now(self, **kwargs):
+        self.logger.debug(f"Setting alarm with kwargs {kwargs}")
         self.send_command(PisugarCommands.RTC_WEB)
+        time_now = parser().parse(self.send_command(PisugarCommands.GET_RTC_TIME))
+        self.logger.debug(f"Current time is {time_now}")
+        dt = datetime.timedelta(**kwargs)
+        alarm_time = time_now + dt
+        self.logger.debug(f"Alarm time is {alarm_time}")
+        self.set_alarm_time(alarm_time)
 
 
 if __name__ == "__main__":
@@ -109,4 +120,5 @@ if __name__ == "__main__":
     ps.send_command(PisugarCommands.RTC_ALARM_SET, "2023-09-29T20:20:30.000-07:00", 127)
     ps.send_command(PisugarCommands.GET_RTC_ALARM_TIME)
     ps.send_command(PisugarCommands.GET_RTC_ALARM_ENABLED)
+    ps.set_alarm_time_from_now(minutes=5)
     ps.restart()
