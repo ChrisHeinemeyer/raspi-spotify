@@ -60,17 +60,18 @@ class Pisugar:
         self.sock.connect((host, port))
 
     def restart(countdown_s: int = 10, num_retries: int = 10):
-        subprocess.run(
-            [
-                "pisugar-poweroff",
-                "--model",
-                "PiSugar 3",
-                "--countdown",
-                str(countdown_s),
-                "--retries",
-                str(num_retries),
-            ]
-        )
+        args = [
+            "pisugar-poweroff",
+            "--model",
+            "PiSugar 3",
+            "--countdown",
+            str(countdown_s),
+            "--retries",
+            str(num_retries),
+        ]
+
+        self.logger.debug(f"Restarting with args {args}")
+        subprocess.run(args)
 
     def send_command(self, cmd: PisugarCommands, *args):
         args = [cmd.value] + list(args)
