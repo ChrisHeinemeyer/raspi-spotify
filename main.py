@@ -2,6 +2,7 @@ import json
 import logging
 import platform
 import subprocess
+import sys
 import time
 from dataclasses import asdict
 from io import BytesIO
@@ -11,9 +12,11 @@ import requests
 import spotipy
 import yaml
 from dacite import from_dict
+from dateutil import parser
 from PIL import Image
 from spotipy.oauth2 import SpotifyOAuth
 
+import pisugar
 from track import Album, Track
 
 SECRETS_FILE = "secrets.yaml"  # pragma: allowlist secret
@@ -133,20 +136,13 @@ def main(config):
             display = auto()
             display.set_image(img, saturation=config["saturation"])
             display.show()
-            logger.debug("Done setting display")
             if config["restart_pisugar"]:
+                ps = pisugar.Pisugar()
+                restart_time = config["restart_time"]
+                restart_args = {r["unit"]: r["period"] for r in restart_time}
+                ps.set_alarm_time_from_now(**restart_args)
                 logger.debug("Shutting down")
-                subprocess.run(
-                    [
-                        "pisugar-poweroff",
-                        "--model",
-                        "PiSugar 3",
-                        "--countdown",
-                        "10",
-                        "--retries",
-                        "10",
-                    ]
-                )
+                ps.shut_down()
 
         else:
             logger.debug(f"Can't set display on platform {platform.system()}")

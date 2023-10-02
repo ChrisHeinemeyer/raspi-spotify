@@ -59,7 +59,7 @@ class Pisugar:
         self.logger.debug(f"Connecting to pisugar socket at {host}: {port})")
         self.sock.connect((host, port))
 
-    def restart(self, countdown_s: int = 10, num_retries: int = 10):
+    def shut_down(self, countdown_s: int = 10, num_retries: int = 10):
         args = [
             "pisugar-poweroff",
             "--model",
@@ -122,4 +122,4 @@ if __name__ == "__main__":
     ps.send_command(PisugarCommands.GET_RTC_ALARM_TIME)
     ps.send_command(PisugarCommands.GET_RTC_ALARM_ENABLED)
     ps.set_alarm_time_from_now(minutes=5)
-    ps.restart()
+    ps.shut_down()
