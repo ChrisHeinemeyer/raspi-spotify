@@ -59,7 +59,7 @@ class Pisugar:
         self.logger.debug(f"Connecting to pisugar socket at {host}: {port})")
         self.sock.connect((host, port))
 
-    def restart(countdown_s: int = 10, num_retries: int = 10):
+    def restart(self, countdown_s: int = 10, num_retries: int = 10):
         args = [
             "pisugar-poweroff",
             "--model",
