@@ -6,6 +6,7 @@ import sys
 import time
 from dataclasses import asdict
 from io import BytesIO
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import requests
@@ -21,7 +22,8 @@ from track import Album, Track
 
 SECRETS_FILE = "secrets.yaml"  # pragma: allowlist secret
 CONFIG_FILE = "config.yaml"
-LOG_FILE = "log.log"
+LOG_DIR = Path(__file__).parent
+LOG_FILE = LOG_DIR / "log.log"
 ALBUM_INFO_FILE = "album_info.json"
 NETWORK_TIMEOUT_S = 180
 HEIGHT_PX = 448
