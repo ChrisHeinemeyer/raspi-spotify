@@ -80,7 +80,7 @@ class Pisugar:
         self.sock.send(send_str.encode())
         res = self.sock.recv(1024)
         self.logger.debug(f"Received {res}")
-        return res.decode()
+        return self.parse_response(res.decode())
 
     def parse_response(self, response: str):
         return response[response.find(":") + 1 :].strip()
