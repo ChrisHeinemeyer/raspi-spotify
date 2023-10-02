@@ -136,18 +136,18 @@ def main(config):
             display = auto()
             display.set_image(img, saturation=config["saturation"])
             display.show()
-            if config["restart_pisugar"]:
-                ps = pisugar.Pisugar()
-                restart_time = config["restart_time"]
-                restart_args = {r["unit"]: r["period"] for r in restart_time}
-                ps.set_alarm_time_from_now(**restart_args)
-                logger.debug("Shutting down")
-                ps.shut_down()
-
         else:
             logger.debug(f"Can't set display on platform {platform.system()}")
     else:
         logger.debug("Not going to get or set image")
+
+    if platform.system() == "Linux" and config["restart_pisugar"]:
+        ps = pisugar.Pisugar()
+        restart_time = config["restart_time"]
+        restart_args = {r["unit"]: r["period"] for r in restart_time}
+        ps.set_alarm_time_from_now(**restart_args)
+        logger.debug("Shutting down")
+        ps.shut_down()
 
     logger.debug("Finished")
 
