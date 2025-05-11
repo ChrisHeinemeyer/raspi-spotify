@@ -1,8 +1,6 @@
 import json
 import logging
 import platform
-import subprocess
-import sys
 import time
 from dataclasses import asdict
 from io import BytesIO
@@ -13,11 +11,33 @@ import requests
 import spotipy
 import yaml
 from dacite import from_dict
-from dateutil import parser
 from PIL import Image
 from spotipy.oauth2 import SpotifyOAuth
 
-import pisugar
+# Only import Linux-specific modules on Linux
+if platform.system() == "Linux":
+    import pisugar
+else:
+    # Create a dummy PiSugar class for non-Linux platforms
+    class DummyPisugar:
+        def __init__(self, *args, **kwargs):
+            self.logger = logging.getLogger(__name__)
+            self.logger.debug(
+                "Using dummy PiSugar implementation for non-Linux platform"
+            )
+
+        def set_alarm_time_from_now(self, **kwargs):
+            self.logger.debug(
+                f"Dummy set_alarm_time_from_now called with args: {kwargs}"
+            )
+            pass
+
+        def shut_down(self, *args, **kwargs):
+            self.logger.debug("Dummy shut_down called - would shut down on Linux")
+            pass
+
+    pisugar = type("pisugar", (), {"Pisugar": DummyPisugar})
+
 from track import Album, Track
 
 SECRETS_FILE = "secrets.yaml"  # pragma: allowlist secret
@@ -132,24 +152,30 @@ def main(config):
             f.write(json.dumps(asdict(album)))
 
         if platform.system() == "Linux":
-            logger.debug(f"Setting display with saturation {config['saturation']}")
-            from inky.auto import auto
+            try:
+                logger.debug(f"Setting display with saturation {config['saturation']}")
+                from inky.auto import auto
 
-            display = auto()
-            display.set_image(img, saturation=config["saturation"])
-            display.show()
+                display = auto()
+                display.set_image(img, saturation=config["saturation"])
+                display.show()
+            except ImportError:
+                logger.warning("Inky module not available - can't update display")
         else:
             logger.debug(f"Can't set display on platform {platform.system()}")
     else:
         logger.debug("Not going to get or set image")
 
-    if platform.system() == "Linux" and config["restart_pisugar"]:
+    if config["restart_pisugar"]:
         ps = pisugar.Pisugar()
         restart_time = config["restart_time"]
         restart_args = {r["unit"]: r["period"] for r in restart_time}
         ps.set_alarm_time_from_now(**restart_args)
-        logger.debug("Shutting down")
-        ps.shut_down()
+        if platform.system() == "Linux":
+            logger.debug("Shutting down")
+            ps.shut_down()
+        else:
+            logger.debug("Would shut down on Linux")
 
     logger.debug("Finished")
 

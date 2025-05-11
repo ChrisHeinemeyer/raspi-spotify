@@ -5,11 +5,10 @@ import logging
 import socket
 import subprocess
 import sys
+import time
 from enum import Enum, Flag, auto
 
 from dateutil.parser import parser
-
-import pisugar
 
 HOST = "127.0.0.1"
 PORT = 8423
@@ -79,6 +78,7 @@ class Pisugar:
 
         self.logger.debug(f"Sending {send_str.encode()}")
         self.sock.send(send_str.encode())
+        time.sleep(1)  # noqa: F821
         res = self.sock.recv(1024)
         self.logger.debug(f"Received {res}")
         return self.parse_response(res.decode())
@@ -122,4 +122,3 @@ if __name__ == "__main__":
     ps.send_command(PisugarCommands.GET_RTC_ALARM_TIME)
     ps.send_command(PisugarCommands.GET_RTC_ALARM_ENABLED)
     ps.set_alarm_time_from_now(minutes=5)
-    ps.shut_down()
